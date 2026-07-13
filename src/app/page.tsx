@@ -1,6 +1,14 @@
+import { redirect } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 import styles from './page.module.css';
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect('/login');
+  }
+
   return (
     <div className={styles.dashboard}>
       {/* Sidebar */}
@@ -19,11 +27,13 @@ export default function Home() {
       <main className={styles.mainContent}>
         <header className={styles.header}>
           <div className={styles.welcome}>
-            <h1>Welcome back, User!</h1>
+            <h1>Welcome back, {session.email.split('@')[0]}!</h1>
             <p>Here's your financial overview for this month.</p>
           </div>
           <div className={styles.userProfile}>
-            <div className={styles.avatar}>U</div>
+            <div className={styles.avatar}>
+              {session.email.charAt(0).toUpperCase()}
+            </div>
           </div>
         </header>
 
@@ -31,15 +41,15 @@ export default function Home() {
         <section className={styles.overviewCards}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Total Balance</div>
-            <div className={styles.cardValue}>$12,450.00</div>
+            <div className={styles.cardValue}>$0.00</div>
           </div>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Monthly Income</div>
-            <div className={styles.cardValue} style={{ color: 'var(--color-success)' }}>+$4,200.00</div>
+            <div className={styles.cardValue} style={{ color: 'var(--color-success)' }}>+$0.00</div>
           </div>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Monthly Expenses</div>
-            <div className={styles.cardValue} style={{ color: 'var(--color-danger)' }}>-$1,840.00</div>
+            <div className={styles.cardValue} style={{ color: 'var(--color-danger)' }}>-$0.00</div>
           </div>
         </section>
 
