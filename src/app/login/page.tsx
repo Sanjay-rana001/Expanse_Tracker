@@ -62,6 +62,9 @@ export default function Login() {
       
       {/* Left side Visuals */}
       <div className={styles.visualSection}>
+        <div style={{ position: 'absolute', top: '40px', left: '40px', fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.05em', zIndex: 10 }}>
+          Premium Pro
+        </div>
         <div className={styles.visualContent}>
           <h2>Master Your Finances.</h2>
           <p>Join thousands of professionals taking control of their money with industry-leading analytics and effortless tracking.</p>

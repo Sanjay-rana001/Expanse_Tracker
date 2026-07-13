@@ -51,6 +51,9 @@ export default function Register() {
       
       {/* Left side Visuals */}
       <div className={styles.visualSection}>
+        <div style={{ position: 'absolute', top: '40px', left: '40px', fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.05em', zIndex: 10 }}>
+          Premium Pro
+        </div>
         <div className={styles.visualContent}>
           <h2>Start Your Journey.</h2>
           <p>Get exclusive access to the world's most intuitive and powerful personal finance tracking platform.</p>

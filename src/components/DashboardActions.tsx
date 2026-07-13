@@ -31,11 +31,11 @@ export const DashboardActions = () => {
   if (loading || !user) return null;
 
   const THEMES = [
-    { id: 'midnight', color: '#0a0a0a', name: 'Midnight' },
-    { id: 'ocean', color: '#0f172a', name: 'Ocean' },
-    { id: 'emerald', color: '#064e3b', name: 'Emerald' },
-    { id: 'sunset', color: '#3f0f24', name: 'Sunset' },
-    { id: 'light', color: '#ffffff', name: 'Light', border: '#cbd5e1' }
+    { id: 'midnight', color: '#18181b', name: 'Midnight', border: '#3f3f46' },
+    { id: 'ocean', color: '#0f172a', name: 'Ocean', border: '#334155' },
+    { id: 'emerald', color: '#064e3b', name: 'Emerald', border: '#047857' },
+    { id: 'sunset', color: '#3f0f24', name: 'Sunset', border: '#881337' },
+    { id: 'light', color: '#f8fafc', name: 'Light', border: '#e2e8f0' }
   ];
 
   const handleSelectTheme = async (newTheme: string) => {

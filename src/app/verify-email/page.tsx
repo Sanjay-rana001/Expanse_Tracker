@@ -39,8 +39,21 @@ export default function VerifyEmail() {
 
   return (
     <div className={styles.authContainer}>
-      <div className={styles.authCard} style={{ textAlign: 'center' }}>
-        <h1 className={styles.authTitle}>Verify your Email</h1>
+      {/* Left side Visuals */}
+      <div className={styles.visualSection}>
+        <div style={{ position: 'absolute', top: '40px', left: '40px', fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.05em', zIndex: 10 }}>
+          Premium Pro
+        </div>
+        <div className={styles.visualContent}>
+          <h2>Secure Your Account.</h2>
+          <p>Please verify your email address to access your premium dashboard and start tracking your finances.</p>
+        </div>
+      </div>
+
+      {/* Right side Form */}
+      <div className={styles.formSection}>
+        <div className={styles.authCard} style={{ textAlign: 'center' }}>
+          <h1 className={styles.authTitle}>Verify your Email</h1>
         <p className={styles.authSubtitle}>
           We've sent a verification link to <strong>{user?.email}</strong>.
           Please click the link in the email to activate your account.
@@ -59,6 +72,7 @@ export default function VerifyEmail() {
         <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'var(--color-danger)', cursor: 'pointer', textDecoration: 'underline' }}>
           Logout & Try another account
         </button>
+        </div>
       </div>
     </div>
   );
