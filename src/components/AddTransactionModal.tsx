@@ -13,7 +13,7 @@ interface Wallet {
 }
 
 export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) => {
-  const { user } = useAuth();
+  const { user, currencySymbol } = useAuth();
   const [type, setType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
@@ -103,7 +103,7 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
           </div>
 
           <div className={styles.selectGroup}>
-            <label className={styles.label}>Amount ($)</label>
+            <label className={styles.label}>Amount ({currencySymbol})</label>
             <input 
               className={styles.select}
               type="number" 
@@ -137,7 +137,7 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
             >
               <option value="" disabled>Select Wallet</option>
               {wallets.map(w => (
-                <option key={w.id} value={w.id}>{w.name} (${w.balance.toFixed(2)})</option>
+                <option key={w.id} value={w.id}>{w.name} ({currencySymbol}{w.balance.toFixed(2)})</option>
               ))}
             </select>
             {wallets.length === 0 && <span className={styles.hint}>No wallets found. Create one first!</span>}

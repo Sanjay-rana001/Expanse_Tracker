@@ -7,7 +7,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import styles from './AddWalletModal.module.css';
 
 export const AddWalletModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) => {
-  const { user } = useAuth();
+  const { user, currencySymbol } = useAuth();
   const [name, setName] = useState('');
   const [balance, setBalance] = useState('');
   const [loading, setLoading] = useState(false);
@@ -58,7 +58,7 @@ export const AddWalletModal = ({ onClose, onSuccess }: { onClose: () => void, on
           </div>
           
           <div className={styles.selectGroup}>
-            <label className={styles.label}>Initial Balance ($)</label>
+            <label className={styles.label}>Initial Balance ({currencySymbol})</label>
             <input 
               className={styles.input}
               type="number" 

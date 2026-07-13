@@ -7,7 +7,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 
 export const SetBudgetModal = ({ currentBudget, onClose, onSuccess }: { currentBudget: number, onClose: () => void, onSuccess: () => void }) => {
-  const { user } = useAuth();
+  const { user, currencySymbol } = useAuth();
   const [budget, setBudget] = useState(currentBudget ? currentBudget.toString() : '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,7 +42,7 @@ export const SetBudgetModal = ({ currentBudget, onClose, onSuccess }: { currentB
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.selectGroup}>
-            <label className={styles.label}>Monthly Limit ($)</label>
+            <label className={styles.label}>Monthly Limit ({currencySymbol})</label>
             <input 
               className={styles.select}
               type="number" 

@@ -25,7 +25,7 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#f43f5e', '#a855f7', '#0ea5e9'];
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading, currencySymbol } = useAuth();
   const [wallets, setWallets] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [allTransactions, setAllTransactions] = useState<any[]>([]);
@@ -133,12 +133,10 @@ export default function Home() {
             {/* STAT CARDS */}
             <div className={`${styles.card} ${styles.statCard}`}>
               <div className={styles.statHeader}>
-                <div className={styles.statIcon} style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--color-primary)' }}>
-                  <Wallet size={18} />
-                </div>
-                Total Balance
+                <h3 className={styles.statTitle}>Total Balance</h3>
+                <div className={styles.statIcon}><Wallet size={20} /></div>
               </div>
-              <div className={styles.statValue}>${totalBalance.toFixed(2)}</div>
+              <div className={styles.statValue}>{currencySymbol}{totalBalance.toFixed(2)}</div>
               <div className={styles.statTrend}>
                 <span className={styles.trendUp}><TrendingUp size={14} /> +2.5%</span> from last month
               </div>
@@ -146,32 +144,26 @@ export default function Home() {
 
             <div className={`${styles.card} ${styles.statCard}`}>
               <div className={styles.statHeader}>
-                <div className={styles.statIcon} style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)' }}>
-                  <ArrowUpRight size={18} />
-                </div>
-                Monthly Income
+                <h3 className={styles.statTitle}>Monthly Income</h3>
+                <div className={`${styles.statIcon} ${styles.iconIncome}`}><TrendingUp size={20} /></div>
               </div>
-              <div className={styles.statValue}>${monthlyIncome.toFixed(2)}</div>
+              <div className={styles.statValue}>{currencySymbol}{monthlyIncome.toFixed(2)}</div>
             </div>
 
             <div className={`${styles.card} ${styles.statCard}`}>
               <div className={styles.statHeader}>
-                <div className={styles.statIcon} style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--color-text-primary)' }}>
-                  <ArrowDownRight size={18} />
-                </div>
-                Monthly Expenses
+                <h3 className={styles.statTitle}>Monthly Expenses</h3>
+                <div className={`${styles.statIcon} ${styles.iconExpense}`}><ArrowDownRight size={20} /></div>
               </div>
-              <div className={styles.statValue}>${monthlyExpense.toFixed(2)}</div>
+              <div className={styles.statValue}>{currencySymbol}{monthlyExpense.toFixed(2)}</div>
             </div>
 
             <div className={`${styles.card} ${styles.statCard}`}>
               <div className={styles.statHeader}>
-                <div className={styles.statIcon} style={{ background: 'rgba(245, 158, 11, 0.1)', color: 'var(--color-warning)' }}>
-                  <DollarSign size={18} />
-                </div>
-                Net Savings
+                <h3 className={styles.statTitle}>Net Savings</h3>
+                <div className={styles.statIcon}><DollarSign size={20} /></div>
               </div>
-              <div className={styles.statValue}>${netSavings.toFixed(2)}</div>
+              <div className={styles.statValue}>{currencySymbol}{netSavings.toFixed(2)}</div>
             </div>
 
             {/* BUDGET GOALS */}
@@ -185,9 +177,9 @@ export default function Home() {
               
               {budget > 0 ? (
                 <div>
-                  <div className={styles.budgetStats}>
-                    <span className={styles.budgetSpent}>${monthlyExpense.toFixed(2)} spent</span>
-                    <span className={styles.budgetTotal}>of ${budget.toFixed(2)}</span>
+                  <div className={styles.budgetHeader}>
+                    <span className={styles.budgetSpent}>{currencySymbol}{monthlyExpense.toFixed(2)} spent</span>
+                    <span className={styles.budgetTotal}>of {currencySymbol}{budget.toFixed(2)}</span>
                   </div>
                   <div className={styles.progressBarTrack}>
                     <div 
@@ -224,10 +216,11 @@ export default function Home() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
                   <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                  <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${currencySymbol}${value}`} />
                   <Tooltip 
                     contentStyle={{ backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: '8px', color: 'var(--color-text-primary)' }}
                     itemStyle={{ color: 'var(--color-text-primary)' }}
+                    formatter={(value: any) => `${currencySymbol}${value}`}
                   />
                   <Area type="monotone" dataKey="Income" stroke="var(--color-success)" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={2} />
                   <Area type="monotone" dataKey="Expense" stroke="#52525b" fillOpacity={1} fill="url(#colorExpense)" strokeWidth={2} />
@@ -261,7 +254,7 @@ export default function Home() {
                     <Tooltip 
                       contentStyle={{ backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: '8px' }}
                       itemStyle={{ color: 'var(--color-text-primary)' }}
-                      formatter={(value: any) => `$${Number(value).toFixed(2)}`}
+                      formatter={(value: any) => `${currencySymbol}${Number(value).toFixed(2)}`}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -321,7 +314,7 @@ export default function Home() {
                             </span>
                           </td>
                           <td style={{ textAlign: 'right', fontWeight: 600 }} className={t.type === 'INCOME' ? styles.txIncome : styles.txExpense}>
-                            {t.type === 'INCOME' ? '+' : '-'}${t.amount.toFixed(2)}
+                            {t.type === 'INCOME' ? '+' : '-'}{currencySymbol}{t.amount.toFixed(2)}
                           </td>
                         </motion.tr>
                       ))}

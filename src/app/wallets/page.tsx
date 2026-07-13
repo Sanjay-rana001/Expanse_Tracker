@@ -18,7 +18,7 @@ interface WalletType {
 }
 
 export default function WalletsPage() {
-  const { user } = useAuth();
+  const { user, currencySymbol } = useAuth();
   const [wallets, setWallets] = useState<WalletType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -110,7 +110,7 @@ export default function WalletsPage() {
                     <div>
                       <div className={styles.walletName}>{wallet.name}</div>
                       <div className={styles.walletBalance}>
-                        ${wallet.balance.toFixed(2)}
+                        {currencySymbol}{wallet.balance.toFixed(2)}
                       </div>
                     </div>
                   </motion.div>

@@ -125,3 +125,33 @@
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+  align-items: start;
+}
+
+.dangerCard {
+  border-color: rgba(244, 63, 94, 0.3);
+}
+
+.dangerBtn {
+  padding: 16px;
+  background-color: transparent;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dangerBtn:hover {
+  background-color: var(--color-danger);
+  color: white;
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.25);
+  transform: translateY(-2px);
+}

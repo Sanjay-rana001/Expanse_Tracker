@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TransactionsPage() {
-  const { user } = useAuth();
+  const { user, currencySymbol } = useAuth();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingTx, setEditingTx] = useState<any>(null);
@@ -136,7 +136,7 @@ export default function TransactionsPage() {
                           </span>
                         </td>
                         <td style={{ textAlign: 'right', fontWeight: 600 }} className={t.type === 'INCOME' ? styles.txIncome : styles.txExpense}>
-                          {t.type === 'INCOME' ? '+' : '-'}${t.amount.toFixed(2)}
+                            {t.type === 'INCOME' ? '+' : '-'}{currencySymbol}{t.amount.toFixed(2)}
                         </td>
                         <td style={{ textAlign: 'right' }}>
                           <button 

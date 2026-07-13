@@ -13,7 +13,7 @@ interface EditTransactionModalProps {
 }
 
 export const EditTransactionModal = ({ transaction, onClose, onSuccess }: EditTransactionModalProps) => {
-  const { user } = useAuth();
+  const { user, currencySymbol } = useAuth();
   const [type, setType] = useState<'EXPENSE' | 'INCOME'>(transaction.type);
   const [amount, setAmount] = useState(transaction.amount.toString());
   const [category, setCategory] = useState(transaction.category);
@@ -113,7 +113,7 @@ export const EditTransactionModal = ({ transaction, onClose, onSuccess }: EditTr
           </div>
 
           <div className={styles.selectGroup}>
-            <label className={styles.label}>Amount ($)</label>
+            <label className={styles.label}>Amount ({currencySymbol})</label>
             <input 
               className={styles.select}
               type="number" 
