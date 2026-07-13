@@ -111,6 +111,15 @@ export default function SettingsPage() {
     if (!user) return;
     setSecLoading(true);
     setSecMessage({ text: '', type: '' });
+
+    // Check if user is signed in with Google
+    const isGoogleUser = user.providerData.some(provider => provider.providerId === 'google.com');
+    if (isGoogleUser) {
+      setSecMessage({ text: 'You are signed in with Google. Password changes are managed through your Google account.', type: 'error' });
+      setSecLoading(false);
+      return;
+    }
+
     try {
       await updatePassword(user, newPassword);
       setSecMessage({ text: 'Password updated successfully!', type: 'success' });
