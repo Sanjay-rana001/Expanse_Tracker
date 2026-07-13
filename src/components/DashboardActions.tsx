@@ -47,6 +47,17 @@ export const DashboardActions = () => {
     }
   };
 
+  const getRadialPos = (index: number, total: number) => {
+    const radius = 65;
+    const startAngle = Math.PI / 2; // Bottom (90 degrees)
+    const endAngle = Math.PI;       // Left (180 degrees)
+    const angle = startAngle + (index / (total - 1)) * (endAngle - startAngle);
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  };
+
   return (
     <div className={styles.actionsContainer}>
       <div className={styles.themeDropdownContainer}>
@@ -62,26 +73,32 @@ export const DashboardActions = () => {
           {isThemeDropdownOpen && (
             <motion.div 
               className={styles.themeDropdown}
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.1 } }}
             >
-              {THEMES.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => handleSelectTheme(t.id)}
-                  title={t.name}
-                  className={`${styles.themeCircle} ${theme === t.id ? styles.themeCircleActive : ''}`}
-                  style={{ 
-                    backgroundColor: t.color, 
-                    borderColor: t.border || 'var(--color-border)',
-                    color: t.id === 'light' ? '#000000' : '#ffffff'
-                  }}
-                >
-                  {theme === t.id && <Check size={16} />}
-                </button>
-              ))}
+              {THEMES.map((t, i) => {
+                const pos = getRadialPos(i, THEMES.length);
+                return (
+                  <motion.button
+                    key={t.id}
+                    onClick={() => handleSelectTheme(t.id)}
+                    title={t.name}
+                    className={`${styles.themeCircle} ${theme === t.id ? styles.themeCircleActive : ''}`}
+                    style={{ 
+                      backgroundColor: t.color, 
+                      borderColor: t.border || 'var(--color-border)',
+                      color: t.id === 'light' ? '#000000' : '#ffffff'
+                    }}
+                    initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+                    animate={{ x: pos.x, y: pos.y, scale: 1, opacity: 1 }}
+                    exit={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25, delay: i * 0.05 }}
+                  >
+                    {theme === t.id && <Check size={16} />}
+                  </motion.button>
+                );
+              })}
             </motion.div>
           )}
         </AnimatePresence>

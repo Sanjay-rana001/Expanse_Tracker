@@ -50,19 +50,18 @@
 
 .themeDropdown {
   position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  display: flex;
-  gap: 12px;
-  box-shadow: var(--shadow-card);
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
   z-index: 100;
+  pointer-events: none;
 }
 
 .themeCircle {
+  position: absolute;
+  top: -16px;
+  left: -16px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -73,6 +72,7 @@
   align-items: center;
   justify-content: center;
   color: white;
+  pointer-events: auto;
 }
 
 .themeCircle:hover {
