@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import { AddWalletModal } from '@/components/AddWalletModal';
 import { DashboardLayout } from '@/components/DashboardLayout';
+import { EmptyState } from '@/components/EmptyState';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet, Plus, Trash2 } from 'lucide-react';
 
 interface WalletType {
