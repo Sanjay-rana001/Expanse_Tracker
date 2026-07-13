@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from './ui/Button';
 import { AddTransactionModal } from './AddTransactionModal';
 import { useRouter } from 'next/navigation';
+import { Plus } from 'lucide-react';
+import styles from './DashboardActions.module.css';
 
 export const DashboardActions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,17 +12,16 @@ export const DashboardActions = () => {
 
   const handleSuccess = () => {
     setIsModalOpen(false);
-    router.refresh(); // Refresh the dashboard to fetch new data
+    // Hard refresh to fetch new data, but window.location.reload is better for Firestore sync sometimes
+    // Or just router.refresh() 
+    window.location.reload(); 
   };
 
   return (
-    <div style={{ marginTop: '16px', marginBottom: '24px', display: 'flex', gap: '16px' }}>
-      <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-        + Add Transaction
-      </Button>
-      <Button variant="secondary" onClick={() => alert('Wallets page coming soon!')}>
-        Manage Wallets
-      </Button>
+    <div className={styles.actionsContainer}>
+      <button className={styles.primaryBtn} onClick={() => setIsModalOpen(true)}>
+        <Plus size={18} /> Add Transaction
+      </button>
 
       {isModalOpen && (
         <AddTransactionModal 

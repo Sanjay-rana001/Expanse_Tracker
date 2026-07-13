@@ -38,16 +38,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-        // Enforce Phone Verification
-        if (!currentUser.phoneNumber) {
-          if (pathname !== '/verify-phone' && pathname !== '/verify-email') {
-            router.push('/verify-phone');
-          }
-          return;
-        }
-
-        // User is fully verified
-        if (pathname === '/login' || pathname === '/register' || pathname === '/verify-email' || pathname === '/verify-phone') {
+        // User is verified (Email)
+        if (pathname === '/login' || pathname === '/register' || pathname === '/verify-email') {
           router.push('/');
         }
       }

@@ -1,25 +1,25 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import styles from './AddTransactionModal.module.css';
-import { useAuth } from './AuthContext';
+import styles from './AddTransactionModal.module.css'; // Reusing the same premium CSS
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, addDoc, doc, updateDoc, increment } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, increment } from 'firebase/firestore';
+import { useAuth } from './AuthContext';
 
-interface Wallet {
-  id: string;
-  name: string;
-  balance: number;
+interface EditTransactionModalProps {
+  transaction: any;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
-export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) => {
+export const EditTransactionModal = ({ transaction, onClose, onSuccess }: EditTransactionModalProps) => {
   const { user } = useAuth();
-  const [type, setType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE');
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('');
-  const [walletId, setWalletId] = useState('');
-  const [notes, setNotes] = useState('');
-  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [type, setType] = useState<'EXPENSE' | 'INCOME'>(transaction.type);
+  const [amount, setAmount] = useState(transaction.amount.toString());
+  const [category, setCategory] = useState(transaction.category);
+  const [walletId, setWalletId] = useState(transaction.walletId);
+  const [notes, setNotes] = useState(transaction.notes || '');
+  const [wallets, setWallets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,9 +28,7 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
     const fetchWallets = async () => {
       const wQuery = query(collection(db, 'wallets'), where('userId', '==', user.uid));
       const wSnapshot = await getDocs(wQuery);
-      const wData = wSnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Omit<Wallet, 'id'>) }));
-      setWallets(wData);
-      if (wData.length > 0) setWalletId(wData[0].id);
+      setWallets(wSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     };
     fetchWallets();
   }, [user]);
@@ -38,33 +36,45 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
-    if (!walletId || !user) {
-      setError('Please select or create a wallet first.');
-      return;
-    }
-
     setLoading(true);
+
     try {
-      const parsedAmount = parseFloat(amount);
+      const newAmount = parseFloat(amount);
+      const oldAmount = transaction.amount;
+      const oldType = transaction.type;
       
-      // 1. Add Transaction
-      await addDoc(collection(db, 'transactions'), {
-        amount: parsedAmount,
+      // Calculate how much the wallet balance needs to change
+      // First, "undo" the old transaction
+      let balanceAdjustment = 0;
+      if (oldType === 'EXPENSE') balanceAdjustment += oldAmount; // refund old expense
+      else balanceAdjustment -= oldAmount; // remove old income
+      
+      // Then, "apply" the new transaction
+      if (type === 'EXPENSE') balanceAdjustment -= newAmount;
+      else balanceAdjustment += newAmount;
+
+      // Update Transaction
+      await updateDoc(doc(db, 'transactions', transaction.id), {
+        amount: newAmount,
         type,
         category,
         walletId,
-        notes,
-        userId: user.uid,
-        date: new Date().toISOString()
+        notes
       });
 
-      // 2. Update Wallet Balance
-      const walletRef = doc(db, 'wallets', walletId);
-      const balanceChange = type === 'EXPENSE' ? -parsedAmount : parsedAmount;
-      await updateDoc(walletRef, {
-        balance: increment(balanceChange)
-      });
+      // Update Wallet Balance
+      if (transaction.walletId === walletId) {
+        await updateDoc(doc(db, 'wallets', walletId), {
+          balance: increment(balanceAdjustment)
+        });
+      } else {
+        // If they changed the wallet, we must refund the old wallet entirely, and charge the new wallet entirely
+        let oldWalletRefund = oldType === 'EXPENSE' ? oldAmount : -oldAmount;
+        let newWalletCharge = type === 'EXPENSE' ? -newAmount : newAmount;
+        
+        await updateDoc(doc(db, 'wallets', transaction.walletId), { balance: increment(oldWalletRefund) });
+        await updateDoc(doc(db, 'wallets', walletId), { balance: increment(newWalletCharge) });
+      }
 
       onSuccess();
     } catch (err: any) {
@@ -78,7 +88,7 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
     <div className={styles.overlay}>
       <div className={styles.modalCard}>
         <div className={styles.header}>
-          <h2>Add Transaction</h2>
+          <h2>Edit Transaction</h2>
           <button onClick={onClose} className={styles.closeBtn}>&times;</button>
         </div>
 
@@ -111,7 +121,6 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
               value={amount} 
               onChange={(e) => setAmount(e.target.value)} 
               required 
-              placeholder="0.00"
             />
           </div>
           
@@ -123,7 +132,6 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
               value={category} 
               onChange={(e) => setCategory(e.target.value)} 
               required 
-              placeholder="e.g., Groceries, Rent, Salary"
             />
           </div>
           
@@ -135,28 +143,25 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
               onChange={(e) => setWalletId(e.target.value)} 
               required
             >
-              <option value="" disabled>Select Wallet</option>
               {wallets.map(w => (
-                <option key={w.id} value={w.id}>{w.name} (${w.balance.toFixed(2)})</option>
+                <option key={w.id} value={w.id}>{w.name}</option>
               ))}
             </select>
-            {wallets.length === 0 && <span className={styles.hint}>No wallets found. Create one first!</span>}
           </div>
 
           <div className={styles.selectGroup}>
-            <label className={styles.label}>Notes (Optional)</label>
+            <label className={styles.label}>Notes</label>
             <input 
               className={styles.select}
               type="text" 
               value={notes} 
               onChange={(e) => setNotes(e.target.value)} 
-              placeholder="Add details..."
             />
           </div>
 
           <button 
             type="submit" 
-            disabled={loading || wallets.length === 0}
+            disabled={loading}
             style={{
               padding: '16px',
               backgroundColor: 'var(--color-primary)',
@@ -171,7 +176,7 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
               boxShadow: '0 4px 14px rgba(99, 102, 241, 0.25)'
             }}
           >
-            {loading ? 'Saving...' : `Save ${type === 'EXPENSE' ? 'Expense' : 'Income'}`}
+            {loading ? 'Saving...' : 'Update Transaction'}
           </button>
         </form>
       </div>
