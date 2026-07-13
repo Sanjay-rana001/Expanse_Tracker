@@ -237,6 +237,13 @@
 
 .statIcon svg {
   animation: iconPulse 1.2s ease-in-out infinite;
+  -webkit-animation: iconPulse 1.2s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+@-webkit-keyframes iconPulse {
+  0%, 100% { -webkit-transform: scale(1); opacity: 1; }
+  50% { -webkit-transform: scale(1.1); opacity: 0.8; }
 }
 
 @keyframes iconPulse {
