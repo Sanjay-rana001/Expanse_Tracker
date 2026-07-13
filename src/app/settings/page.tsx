@@ -166,7 +166,7 @@ export default function SettingsPage() {
                 {profileLoading ? 'Saving...' : 'Save Profile'}
               </button>
             </form>
-          </div>
+          </motion.div>
 
           {/* PREFERENCES */}
           <motion.div className={styles.card} variants={itemVariants}>
