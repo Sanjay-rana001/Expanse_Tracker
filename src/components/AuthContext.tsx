@@ -11,13 +11,27 @@ interface AuthContextType {
   loading: boolean;
   currency: string;
   currencySymbol: string;
+  categories: string[];
 }
+
+const DEFAULT_CATEGORIES = [
+  'Food & Dining', 
+  'Transportation', 
+  'Utilities', 
+  'Shopping', 
+  'Entertainment', 
+  'Healthcare', 
+  'Personal Care', 
+  'Education', 
+  'Others'
+];
 
 const AuthContext = createContext<AuthContextType>({ 
   user: null, 
   loading: true,
   currency: 'INR',
-  currencySymbol: '₹'
+  currencySymbol: '₹',
+  categories: DEFAULT_CATEGORIES
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -27,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState('INR');
   const [currencySymbol, setCurrencySymbol] = useState('₹');
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -71,20 +86,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!user) return;
     const unsubSettings = onSnapshot(doc(db, 'userSettings', user.uid), (docSnap) => {
-      if (docSnap.exists() && docSnap.data().currency) {
-        const curr = docSnap.data().currency;
-        setCurrency(curr);
-        setCurrencySymbol(getSymbol(curr));
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.currency) {
+          setCurrency(data.currency);
+          setCurrencySymbol(getSymbol(data.currency));
+        }
+        if (data.categories && Array.isArray(data.categories)) {
+          setCategories(data.categories);
+        } else {
+          setCategories(DEFAULT_CATEGORIES);
+        }
       } else {
         setCurrency('USD');
         setCurrencySymbol('$');
+        setCategories(DEFAULT_CATEGORIES);
       }
     });
     return () => unsubSettings();
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, currency, currencySymbol }}>
+    <AuthContext.Provider value={{ user, loading, currency, currencySymbol, categories }}>
       {loading ? <div style={{display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center'}}>Loading...</div> : children}
     </AuthContext.Provider>
   );

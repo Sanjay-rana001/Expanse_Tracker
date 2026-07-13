@@ -13,7 +13,7 @@ interface EditTransactionModalProps {
 }
 
 export const EditTransactionModal = ({ transaction, onClose, onSuccess }: EditTransactionModalProps) => {
-  const { user, currencySymbol } = useAuth();
+  const { user, currencySymbol, categories } = useAuth();
   const [type, setType] = useState<'EXPENSE' | 'INCOME'>(transaction.type);
   const [amount, setAmount] = useState(transaction.amount.toString());
   const [category, setCategory] = useState(transaction.category);
@@ -126,13 +126,31 @@ export const EditTransactionModal = ({ transaction, onClose, onSuccess }: EditTr
           
           <div className={styles.selectGroup}>
             <label className={styles.label}>Category</label>
-            <input 
-              className={styles.select}
-              type="text" 
-              value={category} 
-              onChange={(e) => setCategory(e.target.value)} 
-              required 
-            />
+            {type === 'INCOME' ? (
+              <input 
+                className={styles.select}
+                type="text" 
+                value={category} 
+                onChange={(e) => setCategory(e.target.value)} 
+                required 
+              />
+            ) : (
+              <select
+                className={styles.select}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="" disabled>Select Category</option>
+                {/* Ensure old custom categories don't disappear if deleted from settings */}
+                {!categories.includes(category) && category && (
+                  <option value={category}>{category} (Legacy)</option>
+                )}
+                {categories.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            )}
           </div>
           
           <div className={styles.selectGroup}>

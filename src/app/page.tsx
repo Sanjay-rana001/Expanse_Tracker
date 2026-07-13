@@ -9,6 +9,7 @@ import { signOut } from 'firebase/auth';
 import styles from './page.module.css';
 import { DashboardActions } from '@/components/DashboardActions';
 import { SetBudgetModal } from '@/components/SetBudgetModal';
+import { WelcomeNameModal } from '@/components/WelcomeNameModal';
 import { EmptyState } from '@/components/EmptyState';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -115,7 +116,7 @@ export default function Home() {
     <DashboardLayout>
       <header className={styles.header}>
         <div className={styles.welcome}>
-          <h1>Overview</h1>
+          <h1>{user?.displayName ? `Welcome back, ${user.displayName}` : 'Overview'}</h1>
           <p>Here's what's happening with your finances today.</p>
         </div>
         <div className={styles.headerActions}>
@@ -335,6 +336,11 @@ export default function Home() {
               // onSnapshot handles the budget update automatically!
             }} 
           />
+        )}
+        
+        {/* Force name prompt for users without a display name */}
+        {user && !user.displayName && (
+          <WelcomeNameModal user={user} onClose={() => {}} />
         )}
     </DashboardLayout>
   );

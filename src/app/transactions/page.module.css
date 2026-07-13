@@ -124,24 +124,63 @@
 .actionBtn {
   background: none;
   border: none;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   cursor: pointer;
   padding: 8px;
   border-radius: 8px;
-  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 }
 
-.editBtn:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--color-primary);
+.actionBtn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
 }
 
 .deleteBtn:hover {
-  background: var(--color-danger-bg);
   color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+
+@media (max-width: 768px) {
+  .tableContainer {
+    overflow-x: hidden;
+  }
+  .table {
+    min-width: unset;
+    display: block;
+  }
+  .table thead {
+    display: none;
+  }
+  .table tbody, .table tr {
+    display: block;
+    width: 100%;
+  }
+  .table tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .table tr:hover {
+    background-color: transparent;
+  }
+  .table td {
+    display: block;
+    border-bottom: none;
+    padding: 4px 0;
+  }
+  .table td:nth-child(1) { width: 100%; order: 1; margin-bottom: 8px; }
+  .table td:nth-child(2) { width: 50%; order: 2; font-size: 12px; }
+  .table td:nth-child(3) { display: none; }
+  .table td:nth-child(4) { display: none; }
+  .table td:nth-child(5) { width: 50%; order: 3; text-align: right !important; }
+  .table td:nth-child(6) { width: 100%; order: 4; text-align: right !important; margin-top: 8px; }
 }
 
 @keyframes fadeIn {

@@ -13,7 +13,7 @@ interface Wallet {
 }
 
 export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) => {
-  const { user, currencySymbol } = useAuth();
+  const { user, currencySymbol, categories } = useAuth();
   const [type, setType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
@@ -33,7 +33,12 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
       if (wData.length > 0) setWalletId(wData[0].id);
     };
     fetchWallets();
-  }, [user]);
+
+    // Set default category if none selected
+    if (!category && categories.length > 0) {
+      setCategory(categories[0]);
+    }
+  }, [user, categories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,14 +122,28 @@ export const AddTransactionModal = ({ onClose, onSuccess }: { onClose: () => voi
           
           <div className={styles.selectGroup}>
             <label className={styles.label}>Category</label>
-            <input 
-              className={styles.select}
-              type="text" 
-              value={category} 
-              onChange={(e) => setCategory(e.target.value)} 
-              required 
-              placeholder="e.g., Groceries, Rent, Salary"
-            />
+            {type === 'INCOME' ? (
+              <input 
+                className={styles.select}
+                type="text" 
+                value={category} 
+                onChange={(e) => setCategory(e.target.value)} 
+                required 
+                placeholder="e.g., Salary, Gift"
+              />
+            ) : (
+              <select
+                className={styles.select}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="" disabled>Select Category</option>
+                {categories.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            )}
           </div>
           
           <div className={styles.selectGroup}>

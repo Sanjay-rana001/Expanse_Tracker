@@ -9,10 +9,10 @@ import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, categories } = useAuth();
   const router = useRouter();
   
   // Profile State
@@ -24,6 +24,10 @@ export default function SettingsPage() {
   const [currency, setCurrency] = useState('INR');
   const [prefLoading, setPrefLoading] = useState(false);
   const [prefMessage, setPrefMessage] = useState({ text: '', type: '' });
+
+  // Categories State
+  const [newCategory, setNewCategory] = useState('');
+  const [catMessage, setCatMessage] = useState({ text: '', type: '' });
 
   // Security State
   const [newPassword, setNewPassword] = useState('');
@@ -66,11 +70,39 @@ export default function SettingsPage() {
     setPrefMessage({ text: '', type: '' });
     try {
       await setDoc(doc(db, 'userSettings', user.uid), { currency }, { merge: true });
-      setPrefMessage({ text: 'Preferences updated successfully!', type: 'success' });
+      setPrefMessage({ text: 'Preferences updated successfully', type: 'success' });
     } catch (error: any) {
-      setPrefMessage({ text: 'Failed to update preferences.', type: 'error' });
+      setPrefMessage({ text: error.message, type: 'error' });
     } finally {
       setPrefLoading(false);
+    }
+  };
+
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !newCategory.trim()) return;
+    if (categories.includes(newCategory.trim())) {
+      setCatMessage({ text: 'Category already exists', type: 'error' });
+      return;
+    }
+    setCatMessage({ text: '', type: '' });
+    try {
+      const updatedCategories = [...categories, newCategory.trim()];
+      await setDoc(doc(db, 'userSettings', user.uid), { categories: updatedCategories }, { merge: true });
+      setNewCategory('');
+      setCatMessage({ text: 'Category added!', type: 'success' });
+    } catch (error: any) {
+      setCatMessage({ text: error.message, type: 'error' });
+    }
+  };
+
+  const handleDeleteCategory = async (catToDelete: string) => {
+    if (!user) return;
+    try {
+      const updatedCategories = categories.filter(c => c !== catToDelete);
+      await setDoc(doc(db, 'userSettings', user.uid), { categories: updatedCategories }, { merge: true });
+    } catch (error: any) {
+      setCatMessage({ text: error.message, type: 'error' });
     }
   };
 
@@ -210,6 +242,45 @@ export default function SettingsPage() {
                 {prefLoading ? 'Saving...' : 'Save Preferences'}
               </button>
             </form>
+          </motion.div>
+
+          {/* CATEGORIES CARD */}
+          <motion.div variants={itemVariants} className={styles.card}>
+            <h2 className={styles.cardTitle}>Manage Categories</h2>
+            {catMessage.text && (
+              <div className={`${styles.message} ${catMessage.type === 'error' ? styles.error : styles.success}`}>
+                {catMessage.text}
+              </div>
+            )}
+            <form onSubmit={handleAddCategory} className={styles.formGroup} style={{ flexDirection: 'row' }}>
+              <input 
+                type="text" 
+                className={styles.input} 
+                value={newCategory} 
+                onChange={(e) => setNewCategory(e.target.value)} 
+                placeholder="New category name"
+                required
+              />
+              <button type="submit" className={styles.submitBtn} style={{ padding: '14px', flexShrink: 0 }}>
+                <Plus size={20} />
+              </button>
+            </form>
+
+            <div className={styles.categoryList}>
+              {categories.map((cat, index) => (
+                <div key={index} className={styles.categoryItem}>
+                  <span>{cat}</span>
+                  <button 
+                    type="button" 
+                    onClick={() => handleDeleteCategory(cat)}
+                    className={styles.deleteCatBtn}
+                    title="Delete Category"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
           {/* SECURITY */}

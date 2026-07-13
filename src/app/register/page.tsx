@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithPopup, updateProfile } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import styles from '../auth.module.css';
 
@@ -24,6 +24,11 @@ export default function Register() {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      if (name.trim()) {
+        await updateProfile(userCredential.user, { displayName: name.trim() });
+      }
+
       await sendEmailVerification(userCredential.user);
       // AuthContext will handle redirect
     } catch (err: any) {
