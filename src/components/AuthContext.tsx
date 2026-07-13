@@ -16,8 +16,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({ 
   user: null, 
   loading: true,
-  currency: 'USD',
-  currencySymbol: '$'
+  currency: 'INR',
+  currencySymbol: '₹'
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -25,18 +25,19 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currency, setCurrency] = useState('USD');
-  const [currencySymbol, setCurrencySymbol] = useState('$');
+  const [currency, setCurrency] = useState('INR');
+  const [currencySymbol, setCurrencySymbol] = useState('₹');
   const router = useRouter();
   const pathname = usePathname();
 
   const getSymbol = (curr: string) => {
-    switch (curr) {
-      case 'EUR': return '€';
-      case 'GBP': return '£';
-      case 'INR': return '₹';
-      case 'USD':
-      default: return '$';
+    try {
+      const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: curr, minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      const parts = formatter.formatToParts(0);
+      const symbolPart = parts.find(part => part.type === 'currency');
+      return symbolPart ? symbolPart.value : curr;
+    } catch (e) {
+      return curr; // Fallback to currency code if invalid
     }
   };
 

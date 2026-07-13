@@ -9,6 +9,7 @@ import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -20,12 +21,13 @@ export default function SettingsPage() {
   const [profileMessage, setProfileMessage] = useState({ text: '', type: '' });
 
   // Preferences State
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useState('INR');
   const [prefLoading, setPrefLoading] = useState(false);
   const [prefMessage, setPrefMessage] = useState({ text: '', type: '' });
 
   // Security State
   const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [secLoading, setSecLoading] = useState(false);
   const [secMessage, setSecMessage] = useState({ text: '', type: '' });
 
@@ -184,10 +186,24 @@ export default function SettingsPage() {
                   value={currency} 
                   onChange={(e) => setCurrency(e.target.value)}
                 >
+                  <option value="INR">INR (₹)</option>
                   <option value="USD">USD ($)</option>
                   <option value="EUR">EUR (€)</option>
                   <option value="GBP">GBP (£)</option>
-                  <option value="INR">INR (₹)</option>
+                  <option value="JPY">JPY (¥)</option>
+                  <option value="AUD">AUD ($)</option>
+                  <option value="CAD">CAD ($)</option>
+                  <option value="CHF">CHF</option>
+                  <option value="CNY">CNY (¥)</option>
+                  <option value="NZD">NZD ($)</option>
+                  <option value="SGD">SGD ($)</option>
+                  <option value="HKD">HKD ($)</option>
+                  <option value="ZAR">ZAR (R)</option>
+                  <option value="AED">AED (د.إ)</option>
+                  <option value="BRL">BRL (R$)</option>
+                  <option value="RUB">RUB (₽)</option>
+                  <option value="KRW">KRW (₩)</option>
+                  <option value="MXN">MXN ($)</option>
                 </select>
               </div>
               <button type="submit" className={styles.submitBtn} disabled={prefLoading}>
@@ -207,15 +223,37 @@ export default function SettingsPage() {
             <form onSubmit={handleUpdatePassword}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>New Password</label>
-                <input 
-                  type="password" 
-                  className={styles.input} 
-                  value={newPassword} 
-                  onChange={(e) => setNewPassword(e.target.value)} 
-                  placeholder="Enter a strong new password"
-                  required
-                  minLength={6}
-                />
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    className={styles.input} 
+                    value={newPassword} 
+                    onChange={(e) => setNewPassword(e.target.value)} 
+                    placeholder="Enter a strong new password"
+                    required
+                    minLength={6}
+                    style={{ paddingRight: '40px' }}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--color-text-secondary)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               <button type="submit" className={styles.submitBtn} disabled={secLoading || !newPassword}>
                 {secLoading ? 'Updating...' : 'Update Password'}
