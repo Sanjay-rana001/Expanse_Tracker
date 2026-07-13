@@ -193,7 +193,7 @@
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  padding: 24px;
+  padding: 20px;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-card);
@@ -219,29 +219,29 @@
 .statHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 12px;
   color: var(--color-text-secondary);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
 }
 
 .statIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .statIcon svg {
-  animation: iconPulse 3s ease-in-out infinite;
+  animation: iconPulse 1.2s ease-in-out infinite;
 }
 
 @keyframes iconPulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.15); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 0.8; }
 }
 
 .iconBalance { background-color: var(--color-primary-glow); color: var(--color-primary); }
@@ -250,10 +250,10 @@
 .iconSavings { background-color: var(--color-warning-bg); color: var(--color-warning); }
 
 .statValue {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .statTrend {
@@ -270,12 +270,12 @@
 /* Chart Cards */
 .chartCard {
   grid-column: span 8;
-  height: 400px;
+  height: 320px;
 }
 
 .donutCard {
   grid-column: span 4;
-  height: 400px;
+  height: 320px;
 }
 
 @media (max-width: 1024px) {
@@ -400,7 +400,7 @@
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  padding: 24px;
+  padding: 20px;
   box-shadow: var(--shadow-card);
 }
 
