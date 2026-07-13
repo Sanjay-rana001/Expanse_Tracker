@@ -258,7 +258,7 @@ export default function Home() {
                     <Tooltip 
                       contentStyle={{ backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: '8px' }}
                       itemStyle={{ color: 'var(--color-text-primary)' }}
-                      formatter={(value: number) => `$${value.toFixed(2)}`}
+                      formatter={(value: any) => `$${Number(value).toFixed(2)}`}
                     />
                   </PieChart>
                 </ResponsiveContainer>
