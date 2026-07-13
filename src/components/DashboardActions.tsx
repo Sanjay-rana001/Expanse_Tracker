@@ -5,12 +5,12 @@ import { AddTransactionModal } from './AddTransactionModal';
 import { AddWalletModal } from './AddWalletModal';
 import { useAuth } from '@/components/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { Plus, Wallet } from 'lucide-react';
+import { collection, query, where, onSnapshot, doc, setDoc } from 'firebase/firestore';
+import { Plus, Wallet, Palette } from 'lucide-react';
 import styles from './DashboardActions.module.css';
 
 export const DashboardActions = () => {
-  const { user } = useAuth();
+  const { user, theme } = useAuth();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [hasWallets, setHasWallets] = useState(true); // default true to avoid flash
@@ -28,8 +28,23 @@ export const DashboardActions = () => {
 
   if (loading || !user) return null;
 
+  const THEMES = ['midnight', 'ocean', 'emerald', 'sunset', 'light'];
+
+  const cycleTheme = async () => {
+    const currentIndex = THEMES.indexOf(theme || 'midnight');
+    const nextTheme = THEMES[(currentIndex + 1) % THEMES.length];
+    try {
+      await setDoc(doc(db, 'userSettings', user.uid), { theme: nextTheme }, { merge: true });
+    } catch (error) {
+      console.error('Failed to cycle theme', error);
+    }
+  };
+
   return (
     <div className={styles.actionsContainer}>
+      <button className={styles.secondaryBtn} onClick={cycleTheme} title="Change Theme">
+        <Palette size={18} />
+      </button>
       {!hasWallets ? (
         <button className={styles.primaryBtn} onClick={() => setIsWalletModalOpen(true)}>
           <Wallet size={18} /> Add Wallet
