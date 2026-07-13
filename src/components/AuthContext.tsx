@@ -12,6 +12,7 @@ interface AuthContextType {
   currency: string;
   currencySymbol: string;
   categories: string[];
+  theme: string;
 }
 
 const DEFAULT_CATEGORIES = [
@@ -31,7 +32,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   currency: 'INR',
   currencySymbol: '₹',
-  categories: DEFAULT_CATEGORIES
+  categories: DEFAULT_CATEGORIES,
+  theme: 'midnight'
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -42,6 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currency, setCurrency] = useState('INR');
   const [currencySymbol, setCurrencySymbol] = useState('₹');
   const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
+  const [theme, setTheme] = useState('midnight');
   const router = useRouter();
   const pathname = usePathname();
 
@@ -97,17 +100,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setCategories(DEFAULT_CATEGORIES);
         }
+        if (data.theme) {
+          setTheme(data.theme);
+        } else {
+          setTheme('midnight');
+        }
       } else {
         setCurrency('USD');
         setCurrencySymbol('$');
         setCategories(DEFAULT_CATEGORIES);
+        setTheme('midnight');
       }
     });
     return () => unsubSettings();
   }, [user]);
 
+  // Apply Theme to DOM
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  }, [theme]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, currency, currencySymbol, categories }}>
+    <AuthContext.Provider value={{ user, loading, currency, currencySymbol, categories, theme }}>
       {loading ? <div style={{display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center'}}>Loading...</div> : children}
     </AuthContext.Provider>
   );

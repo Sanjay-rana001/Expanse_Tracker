@@ -191,6 +191,43 @@
   color: var(--color-danger);
 }
 
+/* Theme Selector */
+.themeSelector {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.themeBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.themeBtn:hover {
+  transform: scale(1.1);
+}
+
+.themeBtnActive {
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.1);
+}
+
+.themeBtnMidnight { background-color: #0a0a0a; }
+.themeBtnOcean { background-color: #0f172a; }
+.themeBtnEmerald { background-color: #064e3b; }
+.themeBtnSunset { background-color: #3f0f24; }
+.themeBtnLight { background-color: #ffffff; border-color: #cbd5e1; color: #000000; }
+
 @media (max-width: 768px) {
   .card {
     padding: 24px 20px;

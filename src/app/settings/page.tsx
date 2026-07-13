@@ -9,10 +9,18 @@ import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Plus, Trash2, Check } from 'lucide-react';
+
+const THEMES = [
+  { id: 'midnight', name: 'Midnight Indigo', className: 'themeBtnMidnight' },
+  { id: 'ocean', name: 'Ocean Blue', className: 'themeBtnOcean' },
+  { id: 'emerald', name: 'Emerald Forest', className: 'themeBtnEmerald' },
+  { id: 'sunset', name: 'Sunset Rose', className: 'themeBtnSunset' },
+  { id: 'light', name: 'Solar Light', className: 'themeBtnLight' }
+];
 
 export default function SettingsPage() {
-  const { user, categories } = useAuth();
+  const { user, categories, theme } = useAuth();
   const router = useRouter();
   
   // Profile State
@@ -75,6 +83,15 @@ export default function SettingsPage() {
       setPrefMessage({ text: error.message, type: 'error' });
     } finally {
       setPrefLoading(false);
+    }
+  };
+
+  const handleUpdateTheme = async (newTheme: string) => {
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'userSettings', user.uid), { theme: newTheme }, { merge: true });
+    } catch (error: any) {
+      console.error('Failed to update theme', error);
     }
   };
 
@@ -251,6 +268,27 @@ export default function SettingsPage() {
                 {prefLoading ? 'Saving...' : 'Save Preferences'}
               </button>
             </form>
+          </motion.div>
+
+          {/* APPEARANCE CARD */}
+          <motion.div variants={itemVariants} className={styles.card}>
+            <h2 className={styles.cardTitle}>Appearance</h2>
+            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '16px', fontSize: '14px' }}>
+              Personalize your dashboard with a stunning theme.
+            </p>
+            <div className={styles.themeSelector}>
+              {THEMES.map(t => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => handleUpdateTheme(t.id)}
+                  className={`${styles.themeBtn} ${styles[t.className]} ${theme === t.id ? styles.themeBtnActive : ''}`}
+                  title={t.name}
+                >
+                  {theme === t.id && <Check size={20} />}
+                </button>
+              ))}
+            </div>
           </motion.div>
 
           {/* CATEGORIES CARD */}
