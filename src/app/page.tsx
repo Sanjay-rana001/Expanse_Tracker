@@ -2,13 +2,15 @@
 
 import { useAuth } from '@/components/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, limit, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import styles from './page.module.css';
 import { DashboardActions } from '@/components/DashboardActions';
 import { SetBudgetModal } from '@/components/SetBudgetModal';
+import { EmptyState } from '@/components/EmptyState';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { format, subDays, isSameMonth } from 'date-fns';
 import { 
@@ -34,45 +36,46 @@ export default function Home() {
   useEffect(() => {
     if (!user) return;
 
-    const fetchData = async () => {
-      try {
-        // Fetch User Settings (Budget)
-        const settingsDoc = await getDoc(doc(db, 'userSettings', user.uid));
-        if (settingsDoc.exists()) {
-          setBudget(settingsDoc.data().budget || 0);
-        }
+    // We keep dataLoading true until we get at least the first snapshot of all 3 collections.
+    // However, for simplicity, we'll just set it to false after we set up the listeners.
+    setDataLoading(false);
 
-        // Fetch wallets
-        const wQuery = query(collection(db, 'wallets'), where('userId', '==', user.uid));
-        const wSnapshot = await getDocs(wQuery);
-        const wData = wSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setWallets(wData);
-
-        // Fetch recent transactions for table (last 10)
-        const tQuery = query(
-          collection(db, 'transactions'), 
-          where('userId', '==', user.uid),
-          orderBy('date', 'desc'),
-          limit(10)
-        );
-        const tSnapshot = await getDocs(tQuery);
-        const tData = tSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setTransactions(tData);
-
-        // Fetch ALL transactions for charts (in production, we'd paginate or filter by date range)
-        const allTQuery = query(collection(db, 'transactions'), where('userId', '==', user.uid));
-        const allTSnapshot = await getDocs(allTQuery);
-        const allTData = allTSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setAllTransactions(allTData);
-
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      } finally {
-        setDataLoading(false);
+    // 1. Listen to User Settings (Budget)
+    const unsubSettings = onSnapshot(doc(db, 'userSettings', user.uid), (docSnap) => {
+      if (docSnap.exists()) {
+        setBudget(docSnap.data().budget || 0);
       }
-    };
+    });
 
-    fetchData();
+    // 2. Listen to Wallets
+    const wQuery = query(collection(db, 'wallets'), where('userId', '==', user.uid));
+    const unsubWallets = onSnapshot(wQuery, (snapshot) => {
+      setWallets(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    // 3. Listen to Recent Transactions (Last 10)
+    const tQuery = query(
+      collection(db, 'transactions'), 
+      where('userId', '==', user.uid),
+      orderBy('date', 'desc'),
+      limit(10)
+    );
+    const unsubRecentTx = onSnapshot(tQuery, (snapshot) => {
+      setTransactions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    // 4. Listen to ALL Transactions (for Charts)
+    const allTQuery = query(collection(db, 'transactions'), where('userId', '==', user.uid));
+    const unsubAllTx = onSnapshot(allTQuery, (snapshot) => {
+      setAllTransactions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    return () => {
+      unsubSettings();
+      unsubWallets();
+      unsubRecentTx();
+      unsubAllTx();
+    };
   }, [user]);
 
   if (loading || !user) return null; // AuthContext handles redirect
@@ -269,9 +272,11 @@ export default function Home() {
             <div className={`${styles.card} ${styles.tableCard}`}>
               <h2 className={styles.cardTitle}>Recent Transactions</h2>
               {transactions.length === 0 ? (
-                <div style={{ padding: '40px 0', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                  No transactions yet. Start adding some!
-                </div>
+                <EmptyState 
+                  icon={<ShoppingBag size={32} />}
+                  title="No Transactions"
+                  message="You haven't recorded any transactions yet."
+                />
               ) : (
                 <div className={styles.tableContainer}>
                   <table className={styles.table}>
@@ -284,9 +289,15 @@ export default function Home() {
                         <th style={{ textAlign: 'right' }}>Amount</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <AnimatePresence mode="popLayout">
                       {transactions.map(t => (
-                        <tr key={t.id}>
+                        <motion.tr 
+                          key={t.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                          layout
+                        >
                           <td>
                             <div className={styles.txCategory}>
                               <div className={styles.txIcon}>
@@ -302,7 +313,6 @@ export default function Home() {
                             {format(new Date(t.date), 'MMM dd, yyyy')}
                           </td>
                           <td style={{ color: 'var(--color-text-secondary)' }}>
-                            {/* In a real app, we'd map walletId to walletName */}
                             Wallet ending in {t.walletId?.slice(-4) || '****'}
                           </td>
                           <td>
@@ -313,9 +323,9 @@ export default function Home() {
                           <td style={{ textAlign: 'right', fontWeight: 600 }} className={t.type === 'INCOME' ? styles.txIncome : styles.txExpense}>
                             {t.type === 'INCOME' ? '+' : '-'}${t.amount.toFixed(2)}
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))}
-                    </tbody>
+                    </AnimatePresence>
                   </table>
                 </div>
               )}
@@ -329,9 +339,7 @@ export default function Home() {
             onClose={() => setIsBudgetModalOpen(false)} 
             onSuccess={() => {
               setIsBudgetModalOpen(false);
-              // Simple reload to fetch new budget, or we could just update the state locally 
-              // for better UX
-              window.location.reload(); 
+              // onSnapshot handles the budget update automatically!
             }} 
           />
         )}

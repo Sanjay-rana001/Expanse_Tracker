@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/components/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import { AddWalletModal } from '@/components/AddWalletModal';
@@ -21,25 +21,25 @@ export default function WalletsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetchWallets = async () => {
+  useEffect(() => {
     if (!user) return;
-    try {
-      const q = query(collection(db, 'wallets'), where('userId', '==', user.uid));
-      const snapshot = await getDocs(q);
+    setLoading(true);
+
+    const q = query(collection(db, 'wallets'), where('userId', '==', user.uid));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as WalletType[];
       setWallets(data);
-    } catch (err) {
-      console.error("Error fetching wallets", err);
-    } finally {
       setLoading(false);
-    }
-  };
+    }, (err) => {
+      console.error("Error fetching wallets", err);
+      setLoading(false);
+    });
 
-  useEffect(() => {
-    fetchWallets();
+    return () => unsubscribe();
   }, [user]);
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
@@ -76,33 +76,39 @@ export default function WalletsPage() {
         ) : (
           <div className={styles.grid}>
             {wallets.length === 0 ? (
-              <div className={styles.emptyState}>
-                <Wallet size={48} color="var(--color-text-muted)" style={{ marginBottom: '16px' }} />
-                <h3>No wallets found</h3>
-                <p style={{ marginTop: '8px', marginBottom: '24px' }}>Create your first wallet to start tracking your finances.</p>
-                <button className={styles.addBtn} onClick={() => setIsModalOpen(true)} style={{ margin: '0 auto' }}>
-                  <Plus size={18} /> Create Wallet
-                </button>
-              </div>
+              <EmptyState 
+                icon={<Wallet size={32} />}
+                title="No Wallets Found"
+                message="Create your first wallet to start tracking your finances and organizing your money."
+              />
             ) : (
-              wallets.map(wallet => (
-                <div key={wallet.id} className={styles.walletCard}>
-                  <div className={styles.walletHeader}>
-                    <div className={styles.walletIcon}>
-                      <Wallet size={24} />
+              <AnimatePresence mode="popLayout">
+                {wallets.map(wallet => (
+                  <motion.div 
+                    key={wallet.id} 
+                    className={styles.walletCard}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
+                    layout
+                  >
+                    <div className={styles.walletHeader}>
+                      <div className={styles.walletIcon}>
+                        <Wallet size={24} />
+                      </div>
+                      <button className={styles.deleteBtn} onClick={(e) => handleDelete(e, wallet.id)} title="Delete Wallet">
+                        <Trash2 size={18} />
+                      </button>
                     </div>
-                    <button className={styles.deleteBtn} onClick={(e) => handleDelete(e, wallet.id)} title="Delete Wallet">
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                  <div>
-                    <div className={styles.walletName}>{wallet.name}</div>
-                    <div className={styles.walletBalance}>
-                      ${wallet.balance.toFixed(2)}
+                    <div>
+                      <div className={styles.walletName}>{wallet.name}</div>
+                      <div className={styles.walletBalance}>
+                        ${wallet.balance.toFixed(2)}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             )}
           </div>
         )}
@@ -112,7 +118,6 @@ export default function WalletsPage() {
             onClose={() => setIsModalOpen(false)} 
             onSuccess={() => {
               setIsModalOpen(false);
-              fetchWallets();
             }} 
           />
         )}

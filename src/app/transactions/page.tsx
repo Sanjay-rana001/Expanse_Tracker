@@ -2,13 +2,15 @@
 
 import { useAuth } from '@/components/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc, increment, getDoc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import { DashboardLayout } from '@/components/DashboardLayout';
+import { EmptyState } from '@/components/EmptyState';
 import { EditTransactionModal } from '@/components/EditTransactionModal';
 import { ShoppingBag, Trash2, Edit2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TransactionsPage() {
   const { user } = useAuth();
@@ -16,29 +18,29 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [editingTx, setEditingTx] = useState<any>(null);
 
-  const fetchTransactions = async () => {
+  useEffect(() => {
     if (!user) return;
-    try {
-      const q = query(
-        collection(db, 'transactions'), 
-        where('userId', '==', user.uid),
-        orderBy('date', 'desc')
-      );
-      const snapshot = await getDocs(q);
+    
+    setLoading(true);
+    const q = query(
+      collection(db, 'transactions'), 
+      where('userId', '==', user.uid),
+      orderBy('date', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
       setTransactions(data);
-    } catch (err) {
-      console.error("Error fetching transactions", err);
-    } finally {
       setLoading(false);
-    }
-  };
+    }, (err) => {
+      console.error("Error fetching transactions", err);
+      setLoading(false);
+    });
 
-  useEffect(() => {
-    fetchTransactions();
+    return () => unsubscribe();
   }, [user]);
 
   const handleDelete = async (t: any) => {
@@ -84,9 +86,11 @@ export default function TransactionsPage() {
         ) : (
           <div className={styles.card}>
             {transactions.length === 0 ? (
-              <div style={{ padding: '40px 0', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                No transactions found.
-              </div>
+              <EmptyState 
+                icon={<ShoppingBag size={32} />}
+                title="No Transactions Yet"
+                message="Your transaction history is empty. Start adding expenses or income to track your cashflow!"
+              />
             ) : (
               <div className={styles.tableContainer}>
                 <table className={styles.table}>
@@ -100,9 +104,15 @@ export default function TransactionsPage() {
                       <th style={{ textAlign: 'right' }}>Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <AnimatePresence mode="popLayout">
                     {transactions.map(t => (
-                      <tr key={t.id}>
+                      <motion.tr 
+                        key={t.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                        layout
+                      >
                         <td>
                           <div className={styles.txCategory}>
                             <div className={styles.txIcon}>
@@ -144,9 +154,9 @@ export default function TransactionsPage() {
                             <Trash2 size={16} />
                           </button>
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))}
-                  </tbody>
+                  </AnimatePresence>
                 </table>
               </div>
             )}
@@ -159,7 +169,7 @@ export default function TransactionsPage() {
             onClose={() => setEditingTx(null)} 
             onSuccess={() => {
               setEditingTx(null);
-              fetchTransactions();
+              // fetchTransactions() is no longer needed since onSnapshot will auto-update
             }} 
           />
         )}

@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/components/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -18,21 +18,21 @@ export default function AnalyticsPage() {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (!user) return;
-    const fetchTransactions = async () => {
-      try {
-        const q = query(collection(db, 'transactions'), where('userId', '==', user.uid));
-        const snapshot = await getDocs(q);
-        setTransactions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      } catch (err) {
-        console.error("Error fetching transactions", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTransactions();
+    setLoading(true);
+
+    const q = query(collection(db, 'transactions'), where('userId', '==', user.uid));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setTransactions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setLoading(false);
+    }, (err) => {
+      console.error("Error fetching transactions", err);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, [user]);
 
   // --- Data Processing ---
