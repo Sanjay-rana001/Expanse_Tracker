@@ -107,7 +107,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
-                placeholder="you@company.com"
+                placeholder="Sanjayrana00002023@gmail.com"
               />
             </div>
             <div className={styles.formGroup}>

@@ -91,7 +91,7 @@ export default function Register() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required 
-                placeholder="John Doe"
+                placeholder="Sanjay Rana"
               />
             </div>
             <div className={styles.formGroup}>
@@ -103,7 +103,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
-                placeholder="you@company.com"
+                placeholder="Sanjayrana00002023@gmail.com"
               />
             </div>
             <div className={styles.formGroup}>

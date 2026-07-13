@@ -41,7 +41,7 @@ export const WelcomeNameModal = ({ user, onClose }: { user: User, onClose: () =>
               value={name} 
               onChange={(e) => setName(e.target.value)} 
               required 
-              placeholder="e.g., Sanjay"
+              placeholder="e.g., Sanjay Rana"
               autoFocus
             />
           </div>
