@@ -82,6 +82,11 @@ export default function WalletsPage() {
                 icon={<Wallet size={32} />}
                 title="No Wallets Found"
                 message="Create your first wallet to start tracking your finances and organizing your money."
+                action={
+                  <button className={styles.addBtn} onClick={() => setIsModalOpen(true)} style={{ margin: '0 auto' }}>
+                    <Plus size={18} /> Create Wallet
+                  </button>
+                }
               />
             ) : (
               <AnimatePresence mode="popLayout">

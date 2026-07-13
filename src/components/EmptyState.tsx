@@ -7,9 +7,10 @@ interface EmptyStateProps {
   icon: React.ReactNode;
   title: string;
   message: string;
+  action?: React.ReactNode;
 }
 
-export const EmptyState = ({ icon, title, message }: EmptyStateProps) => {
+export const EmptyState = ({ icon, title, message, action }: EmptyStateProps) => {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -22,7 +23,9 @@ export const EmptyState = ({ icon, title, message }: EmptyStateProps) => {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '60px 20px',
-        textAlign: 'center'
+        textAlign: 'center',
+        gridColumn: '1 / -1', // Ensures it spans full width if inside a CSS grid
+        width: '100%'
       }}
     >
       <motion.div
@@ -53,9 +56,14 @@ export const EmptyState = ({ icon, title, message }: EmptyStateProps) => {
       <h3 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '8px' }}>
         {title}
       </h3>
-      <p style={{ fontSize: '15px', color: 'var(--color-text-secondary)', maxWidth: '300px' }}>
+      <p style={{ fontSize: '15px', color: 'var(--color-text-secondary)', maxWidth: '300px', marginBottom: action ? '24px' : '0' }}>
         {message}
       </p>
+      {action && (
+        <div style={{ marginTop: '8px' }}>
+          {action}
+        </div>
+      )}
     </motion.div>
   );
 };
