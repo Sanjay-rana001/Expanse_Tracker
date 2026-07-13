@@ -51,7 +51,7 @@
   .titleWrapper {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0px;
     margin-bottom: 24px;
     opacity: 0;
     animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
@@ -73,6 +73,7 @@
     align-items: center;
     gap: 4px;
     height: 32px;
+    margin-left: 2px;
   }
 
   .dynamicEqualizer .bar {
