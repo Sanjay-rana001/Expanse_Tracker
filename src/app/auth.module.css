@@ -22,6 +22,12 @@
     padding: 4rem;
   }
 
+  @keyframes gradientPulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+  }
+
   .visualSection::before {
     content: '';
     position: absolute;
@@ -32,6 +38,7 @@
     background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.3), transparent 40%),
                 radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.3), transparent 40%);
     z-index: 1;
+    animation: gradientPulse 10s ease-in-out infinite;
   }
 
   .visualContent {
@@ -50,12 +57,16 @@
     background: linear-gradient(to right, #ffffff, #94a3b8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    opacity: 0;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
   }
 
   .visualContent p {
     font-size: 18px;
     color: #cbd5e1;
     line-height: 1.6;
+    opacity: 0;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
   }
 }
 
