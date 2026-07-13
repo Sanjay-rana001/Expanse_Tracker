@@ -43,18 +43,9 @@
 
   .visualContent {
     position: relative;
-    z-index: 2;
+    z-index: 10;
     color: white;
     max-width: 480px;
-  }
-
-  .titleWrapper {
-    display: flex;
-    align-items: center;
-    gap: 0px;
-    margin-bottom: 24px;
-    opacity: 0;
-    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
   }
 
   .visualContent h2 {
@@ -62,18 +53,22 @@
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.03em;
-    margin: 0;
+    margin-bottom: 24px;
     background: linear-gradient(to right, #ffffff, #94a3b8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    opacity: 0;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
   }
 
   .dynamicEqualizer {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    vertical-align: baseline;
     gap: 4px;
     height: 32px;
-    margin-left: 2px;
+    margin-left: 8px;
+    -webkit-text-fill-color: initial;
   }
 
   .dynamicEqualizer .bar {

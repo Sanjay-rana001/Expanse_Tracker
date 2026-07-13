@@ -67,14 +67,14 @@ export default function Register() {
         </div>
 
         <div className={styles.visualContent}>
-          <div className={styles.titleWrapper}>
-            <h2>Start Your Journey.</h2>
-            <div className={styles.dynamicEqualizer}>
-              <div className={styles.bar}></div>
-              <div className={styles.bar}></div>
-              <div className={styles.bar}></div>
-            </div>
-          </div>
+          <h2>
+            Start Your Journey.
+            <span className={styles.dynamicEqualizer}>
+              <span className={styles.bar}></span>
+              <span className={styles.bar}></span>
+              <span className={styles.bar}></span>
+            </span>
+          </h2>
           <p>Get exclusive access to the world's most intuitive and powerful personal finance tracking platform.</p>
         </div>
       </div>

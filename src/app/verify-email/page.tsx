@@ -57,14 +57,14 @@ export default function VerifyEmail() {
         </div>
 
         <div className={styles.visualContent}>
-          <div className={styles.titleWrapper}>
-            <h2>Secure Your Account.</h2>
-            <div className={styles.dynamicEqualizer}>
-              <div className={styles.bar}></div>
-              <div className={styles.bar}></div>
-              <div className={styles.bar}></div>
-            </div>
-          </div>
+          <h2>
+            Secure Your Account.
+            <span className={styles.dynamicEqualizer}>
+              <span className={styles.bar}></span>
+              <span className={styles.bar}></span>
+              <span className={styles.bar}></span>
+            </span>
+          </h2>
           <p>Please verify your email address to access your premium dashboard and start tracking your finances.</p>
         </div>
       </div>

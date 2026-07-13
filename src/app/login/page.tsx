@@ -78,14 +78,14 @@ export default function Login() {
         </div>
 
         <div className={styles.visualContent}>
-          <div className={styles.titleWrapper}>
-            <h2>Master Your Finances.</h2>
-            <div className={styles.dynamicEqualizer}>
-              <div className={styles.bar}></div>
-              <div className={styles.bar}></div>
-              <div className={styles.bar}></div>
-            </div>
-          </div>
+          <h2>
+            Master Your Finances.
+            <span className={styles.dynamicEqualizer}>
+              <span className={styles.bar}></span>
+              <span className={styles.bar}></span>
+              <span className={styles.bar}></span>
+            </span>
+          </h2>
           <p>Join thousands of professionals taking control of their money with industry-leading analytics and effortless tracking.</p>
         </div>
       </div>
