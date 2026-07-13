@@ -235,6 +235,15 @@
   justify-content: center;
 }
 
+.statIcon svg {
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
 .iconBalance { background-color: var(--color-primary-glow); color: var(--color-primary); }
 .iconIncome { background-color: var(--color-success-bg); color: var(--color-success); }
 .iconExpense { background-color: var(--color-danger-bg); color: var(--color-danger); }
