@@ -128,7 +128,7 @@
 
 .settingsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
   gap: 32px;
   align-items: start;
 }
@@ -154,4 +154,16 @@
   color: white;
   box-shadow: 0 4px 14px rgba(244, 63, 94, 0.25);
   transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 24px 20px;
+  }
+  .settingsGrid {
+    gap: 20px;
+  }
+  .cardTitle {
+    margin-bottom: 20px;
+  }
 }
