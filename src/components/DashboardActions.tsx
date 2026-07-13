@@ -1,32 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AddTransactionModal } from './AddTransactionModal';
-import { useRouter } from 'next/navigation';
-import { Plus } from 'lucide-react';
+import { AddWalletModal } from './AddWalletModal';
+import { useAuth } from '@/components/AuthContext';
+import { db } from '@/lib/firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { Plus, Wallet } from 'lucide-react';
 import styles from './DashboardActions.module.css';
 
 export const DashboardActions = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
+  const { user } = useAuth();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [hasWallets, setHasWallets] = useState(true); // default true to avoid flash
+  const [loading, setLoading] = useState(true);
 
-  const handleSuccess = () => {
-    setIsModalOpen(false);
-    // Hard refresh to fetch new data, but window.location.reload is better for Firestore sync sometimes
-    // Or just router.refresh() 
-    window.location.reload(); 
-  };
+  useEffect(() => {
+    if (!user) return;
+    const wQuery = query(collection(db, 'wallets'), where('userId', '==', user.uid));
+    const unsubscribe = onSnapshot(wQuery, (snapshot) => {
+      setHasWallets(!snapshot.empty);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [user]);
+
+  if (loading || !user) return null;
 
   return (
     <div className={styles.actionsContainer}>
-      <button className={styles.primaryBtn} onClick={() => setIsModalOpen(true)}>
-        <Plus size={18} /> Add Transaction
-      </button>
+      {!hasWallets ? (
+        <button className={styles.primaryBtn} onClick={() => setIsWalletModalOpen(true)}>
+          <Wallet size={18} /> Add Wallet
+        </button>
+      ) : (
+        <button className={styles.primaryBtn} onClick={() => setIsTxModalOpen(true)}>
+          <Plus size={18} /> Add Transaction
+        </button>
+      )}
 
-      {isModalOpen && (
+      {isTxModalOpen && (
         <AddTransactionModal 
-          onClose={() => setIsModalOpen(false)} 
-          onSuccess={handleSuccess} 
+          onClose={() => setIsTxModalOpen(false)} 
+          onSuccess={() => setIsTxModalOpen(false)} 
+        />
+      )}
+
+      {isWalletModalOpen && (
+        <AddWalletModal 
+          onClose={() => setIsWalletModalOpen(false)} 
+          onSuccess={() => setIsWalletModalOpen(false)} 
         />
       )}
     </div>
