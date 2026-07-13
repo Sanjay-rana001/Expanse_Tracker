@@ -41,9 +41,21 @@ export default function VerifyEmail() {
     <div className={styles.authContainer}>
       {/* Left side Visuals */}
       <div className={styles.visualSection}>
-        <div style={{ position: 'absolute', top: '40px', left: '40px', fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.05em', zIndex: 10 }}>
-          Premium Pro
+        {/* Animated Background Elements */}
+        <div className={styles.floatingCircle1}></div>
+        <div className={styles.floatingCircle2}></div>
+        <div className={styles.floatingCircle3}></div>
+        
+        {/* Glassmorphism Cards */}
+        <div className={styles.glassCard1}>
+          <div className={styles.glassCardLine}></div>
+          <div className={styles.glassCardLineShort}></div>
         </div>
+        <div className={styles.glassCard2}>
+           <div className={styles.glassCardCircle}></div>
+           <div className={styles.glassCardLineShort}></div>
+        </div>
+
         <div className={styles.visualContent}>
           <h2>Secure Your Account.</h2>
           <p>Please verify your email address to access your premium dashboard and start tracking your finances.</p>

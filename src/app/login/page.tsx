@@ -62,9 +62,21 @@ export default function Login() {
       
       {/* Left side Visuals */}
       <div className={styles.visualSection}>
-        <div style={{ position: 'absolute', top: '40px', left: '40px', fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.05em', zIndex: 10 }}>
-          Premium Pro
+        {/* Animated Background Elements */}
+        <div className={styles.floatingCircle1}></div>
+        <div className={styles.floatingCircle2}></div>
+        <div className={styles.floatingCircle3}></div>
+        
+        {/* Glassmorphism Cards */}
+        <div className={styles.glassCard1}>
+          <div className={styles.glassCardLine}></div>
+          <div className={styles.glassCardLineShort}></div>
         </div>
+        <div className={styles.glassCard2}>
+           <div className={styles.glassCardCircle}></div>
+           <div className={styles.glassCardLineShort}></div>
+        </div>
+
         <div className={styles.visualContent}>
           <h2>Master Your Finances.</h2>
           <p>Join thousands of professionals taking control of their money with industry-leading analytics and effortless tracking.</p>

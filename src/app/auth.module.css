@@ -70,6 +70,122 @@
   }
 }
 
+/* --- Floating Animations --- */
+@keyframes float1 {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(20px) scale(0.95); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-15px, 15px) scale(1.1); }
+}
+
+.floatingCircle1 {
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(168, 85, 247, 0.4));
+  filter: blur(20px);
+  animation: float1 6s ease-in-out infinite;
+  z-index: 1;
+}
+
+.floatingCircle2 {
+  position: absolute;
+  bottom: 20%;
+  right: 15%;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(14, 165, 233, 0.3));
+  filter: blur(25px);
+  animation: float2 8s ease-in-out infinite;
+  z-index: 1;
+}
+
+.floatingCircle3 {
+  position: absolute;
+  top: 40%;
+  right: 25%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.4), rgba(245, 158, 11, 0.4));
+  filter: blur(15px);
+  animation: float3 7s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes floatCard1 {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-15px) rotate(-3deg); }
+}
+
+@keyframes floatCard2 {
+  0%, 100% { transform: translateY(0) rotate(5deg); }
+  50% { transform: translateY(15px) rotate(3deg); }
+}
+
+.glassCard1, .glassCard2 {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  z-index: 2;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.glassCard1 {
+  top: 20%;
+  right: -20px;
+  width: 200px;
+  height: 120px;
+  animation: floatCard1 5s ease-in-out infinite;
+}
+
+.glassCard2 {
+  bottom: 25%;
+  left: 10%;
+  width: 160px;
+  height: 140px;
+  animation: floatCard2 6s ease-in-out infinite;
+}
+
+.glassCardLine {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.glassCardLineShort {
+  width: 60%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.glassCardCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  margin-bottom: 16px;
+}
+
 /* --- Right Side: Form Content --- */
 .formSection {
   flex: 1;
