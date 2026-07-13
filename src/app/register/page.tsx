@@ -67,7 +67,10 @@ export default function Register() {
         </div>
 
         <div className={styles.visualContent}>
-          <h2>Start Your Journey.</h2>
+          <div className={styles.titleWrapper}>
+            <h2>Start Your Journey.</h2>
+            <span className={styles.bouncingIcon}>🚀</span>
+          </div>
           <p>Get exclusive access to the world's most intuitive and powerful personal finance tracking platform.</p>
         </div>
       </div>

@@ -78,7 +78,10 @@ export default function Login() {
         </div>
 
         <div className={styles.visualContent}>
-          <h2>Master Your Finances.</h2>
+          <div className={styles.titleWrapper}>
+            <h2>Master Your Finances.</h2>
+            <span className={styles.bouncingIcon}>📈</span>
+          </div>
           <p>Join thousands of professionals taking control of their money with industry-leading analytics and effortless tracking.</p>
         </div>
       </div>
