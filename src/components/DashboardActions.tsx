@@ -6,13 +6,15 @@ import { AddWalletModal } from './AddWalletModal';
 import { useAuth } from '@/components/AuthContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot, doc, setDoc } from 'firebase/firestore';
-import { Plus, Wallet, Palette } from 'lucide-react';
+import { Plus, Wallet, Palette, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './DashboardActions.module.css';
 
 export const DashboardActions = () => {
   const { user, theme } = useAuth();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [hasWallets, setHasWallets] = useState(true); // default true to avoid flash
   const [loading, setLoading] = useState(true);
 
@@ -28,23 +30,62 @@ export const DashboardActions = () => {
 
   if (loading || !user) return null;
 
-  const THEMES = ['midnight', 'ocean', 'emerald', 'sunset', 'light'];
+  const THEMES = [
+    { id: 'midnight', color: '#0a0a0a', name: 'Midnight' },
+    { id: 'ocean', color: '#0f172a', name: 'Ocean' },
+    { id: 'emerald', color: '#064e3b', name: 'Emerald' },
+    { id: 'sunset', color: '#3f0f24', name: 'Sunset' },
+    { id: 'light', color: '#ffffff', name: 'Light', border: '#cbd5e1' }
+  ];
 
-  const cycleTheme = async () => {
-    const currentIndex = THEMES.indexOf(theme || 'midnight');
-    const nextTheme = THEMES[(currentIndex + 1) % THEMES.length];
+  const handleSelectTheme = async (newTheme: string) => {
     try {
-      await setDoc(doc(db, 'userSettings', user.uid), { theme: nextTheme }, { merge: true });
+      await setDoc(doc(db, 'userSettings', user.uid), { theme: newTheme }, { merge: true });
+      setIsThemeDropdownOpen(false);
     } catch (error) {
-      console.error('Failed to cycle theme', error);
+      console.error('Failed to update theme', error);
     }
   };
 
   return (
     <div className={styles.actionsContainer}>
-      <button className={styles.secondaryBtn} onClick={cycleTheme} title="Change Theme">
-        <Palette size={18} />
-      </button>
+      <div className={styles.themeDropdownContainer}>
+        <button 
+          className={styles.secondaryBtn} 
+          onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)} 
+          title="Change Theme"
+        >
+          <Palette size={18} />
+        </button>
+
+        <AnimatePresence>
+          {isThemeDropdownOpen && (
+            <motion.div 
+              className={styles.themeDropdown}
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
+              {THEMES.map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => handleSelectTheme(t.id)}
+                  title={t.name}
+                  className={`${styles.themeCircle} ${theme === t.id ? styles.themeCircleActive : ''}`}
+                  style={{ 
+                    backgroundColor: t.color, 
+                    borderColor: t.border || 'var(--color-border)',
+                    color: t.id === 'light' ? '#000000' : '#ffffff'
+                  }}
+                >
+                  {theme === t.id && <Check size={16} />}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       {!hasWallets ? (
         <button className={styles.primaryBtn} onClick={() => setIsWalletModalOpen(true)}>
           <Wallet size={18} /> Add Wallet
