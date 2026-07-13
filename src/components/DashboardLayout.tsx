@@ -24,10 +24,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       
       {/* MOBILE HEADER */}
       <div className={styles.mobileHeader}>
-        <div className={styles.mobileLogo}>
+        <Link href="/" className={styles.mobileLogo} onClick={closeSidebar}>
           <Activity size={24} color="var(--color-primary)" />
           Expanse
-        </div>
+        </Link>
         <button className={styles.hamburgerBtn} onClick={toggleSidebar}>
           {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -41,10 +41,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
       {/* SIDEBAR */}
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
-        <div className={styles.logo}>
+        <Link href="/" className={styles.logo} onClick={closeSidebar}>
           <Activity size={28} color="var(--color-primary)" />
           Expanse
-        </div>
+        </Link>
         
         <nav className={styles.nav}>
           <Link href="/" className={`${styles.navItem} ${pathname === '/' ? styles.navItemActive : ''}`} onClick={closeSidebar}>
