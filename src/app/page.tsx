@@ -134,7 +134,7 @@ export default function Home() {
             <div className={`${styles.card} ${styles.statCard}`}>
               <div className={styles.statHeader}>
                 <h3 className={styles.statTitle}>Total Balance</h3>
-                <div className={styles.statIcon}><Wallet size={20} /></div>
+                <div className={`${styles.statIcon} ${styles.iconBalance}`}><Wallet size={20} /></div>
               </div>
               <div className={styles.statValue}>{currencySymbol}{totalBalance.toFixed(2)}</div>
               <div className={styles.statTrend}>
@@ -161,7 +161,7 @@ export default function Home() {
             <div className={`${styles.card} ${styles.statCard}`}>
               <div className={styles.statHeader}>
                 <h3 className={styles.statTitle}>Net Savings</h3>
-                <div className={styles.statIcon}><DollarSign size={20} /></div>
+                <div className={`${styles.statIcon} ${styles.iconSavings}`}><DollarSign size={20} /></div>
               </div>
               <div className={styles.statValue}>{currencySymbol}{netSavings.toFixed(2)}</div>
             </div>

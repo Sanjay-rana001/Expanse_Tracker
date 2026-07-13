@@ -33,12 +33,17 @@
 }
 
 .tableContainer {
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  min-width: 600px;
 }
 
 .table th {
