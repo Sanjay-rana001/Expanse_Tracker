@@ -68,14 +68,36 @@
     -webkit-text-fill-color: transparent;
   }
 
-  .bouncingIcon {
-    font-size: 48px;
-    animation: bounceIcon 2s ease-in-out infinite;
+  .dynamicEqualizer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
   }
 
-  @keyframes bounceIcon {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+  .dynamicEqualizer .bar {
+    width: 6px;
+    background: linear-gradient(to top, #6366f1, #a855f7);
+    border-radius: 4px;
+    animation: bounceBar 1.2s ease-in-out infinite;
+  }
+
+  .dynamicEqualizer .bar:nth-child(1) {
+    height: 16px;
+    animation-delay: 0s;
+  }
+  .dynamicEqualizer .bar:nth-child(2) {
+    height: 24px;
+    animation-delay: 0.2s;
+  }
+  .dynamicEqualizer .bar:nth-child(3) {
+    height: 12px;
+    animation-delay: 0.4s;
+  }
+
+  @keyframes bounceBar {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(1.8); }
   }
 
   .visualContent p {
